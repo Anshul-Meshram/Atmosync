@@ -16,7 +16,9 @@ env/
 
 # Data
 data/raw/*
+!data/raw/.gitkeep
 data/preprocessed/*
+!data/preprocessed/.gitkeep
 
 # Models
 models/
