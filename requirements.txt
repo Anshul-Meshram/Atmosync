@@ -3,5 +3,8 @@ pandas
 scikit-learn
 requests
 python-dotenv
-
-
+fastapi
+uvicorn
+sqlalchemy
+pytest
+EOF
