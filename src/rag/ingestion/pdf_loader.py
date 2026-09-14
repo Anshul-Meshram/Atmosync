@@ -1,5 +1,6 @@
 import fitz
 from pathlib import Path
+from .text_cleaner import clean_text
 
 
 def extract_pages_from_pdf(pdf_path: str) -> list[dict]:
@@ -54,23 +55,61 @@ def check_pdf_text(pages: list[dict]) -> bool:
 
     return True
 
+def process_pdf(pdf_path: str) -> list[dict]:
+    """
+    Complete PDF ingestion pipeline
+
+    steps:
+    1. Extract pages
+    2. Check whether text exists
+    3. clean page text 
+    4. Remove Empty Spaces 
+
+    Args:
+        pdf_path : Path to the PDF file.
+    
+    Returns:
+        List of processed pages 
+    """
+    pages = extract_pages_from_pdf(pdf_path)
+
+    if not check_pdf_text(pages):
+        raise ValueError(
+                         "No extraction text foung in the pdf."
+                         "The pdf maybe scanned or image based ."
+                         )
+    processed_pages = []
+
+    for page in pages:
+        cleaned_text = clean_text(page["text"])
+
+        #Ignore completely empty pages 
+        if not cleaned_text:
+            continue
+        processed_pages.append({
+            "page": page["page"],
+            "text": cleaned_text
+        })
+    return processed_pages
+
+    
+        
 
 if __name__ == "__main__":
 
     pdf_file = "M:/sem7/Major Project/AtmoSync/src/rag/documents/Climate_Intelligence_System_Project_Report.pdf"
 
-    pages = extract_pages_from_pdf(pdf_file)
+    pages = process_pdf(pdf_file)
 
     has_text = check_pdf_text(pages)
 
-    if not has_text:
-        print("WARNING: No extractable text found.")
-        print("This may be a scanned/image-based PDF.")
-    else:
-        print("PDF contains extractable text.")
-
-    print(f"Total pages: {len(pages)}")
+    print("PDF ingestion completed successfully.")
+    print(f"Pages with text: {len(pages)}")
     print(
         f"Total characters: "
         f"{sum(len(page['text']) for page in pages)}"
     )
+
+    print("First page review:")
+    print("-"*50)
+    print(pages[0]["text"][:500])  # Print first 500 characters of the first page
