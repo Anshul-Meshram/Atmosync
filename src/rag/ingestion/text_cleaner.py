@@ -12,14 +12,14 @@ def clean_text(text:str)->str:
 
     if not text:
         return ""
-    #Replace multiple spaces/ tabs with a single space
-    text = re.sub(r"t]+"," ", text)
+    # Replace multiple spaces/tabs with a single space.
+    text = re.sub(r"[ \t]+", " ", text)
 
-    #Remove spaces before/after newlines
-    text = re.sub(r" *\n*","\n",text)
+    # Remove spaces before and after newlines.
+    text = re.sub(r" *\n *", "\n", text)
 
-    #Replace 3 or more newlined with 2 newlines
-    text = re.sub(r"\n{3, }","\n\n",text)
+    # Replace three or more newlines with two newlines.
+    text = re.sub(r"\n{3,}", "\n\n", text)
 
     return text.strip()
 
