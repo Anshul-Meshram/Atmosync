@@ -145,7 +145,7 @@ def chunk_pages(pages: list[dict]) -> list[dict]:
 
     return all_chunks
 
-# 🔴 NEW: Basic chunker test
+
 if __name__ == "__main__":
 
     sample_text = """
