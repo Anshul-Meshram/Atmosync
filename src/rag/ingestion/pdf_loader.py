@@ -97,7 +97,7 @@ def process_pdf(pdf_path: str) -> list[dict]:
 
 if __name__ == "__main__":
 
-    pdf_file = "M:/sem7/Major Project/AtmoSync/src/rag/documents/Climate_Intelligence_System_Project_Report.pdf"
+    pdf_file = "M:/sem7/Major Project/AtmoSync/src/rag/documents/weather_report_2026-09-21.pdf"
 
     pages = process_pdf(pdf_file)
 

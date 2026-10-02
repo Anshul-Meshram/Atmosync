@@ -1,58 +1,63 @@
-import uuid
 
-from qdrant_client.models import PointStruct 
+import uuid
+from pathlib import Path
+
+from qdrant_client.models import PointStruct
+
 from src.rag.embeddings.embedding_model import generate_embedding
 from src.rag.vector_db.qdrant_client import client, COLLECTION_NAME
 
-def index_chunks(chunks: list[dict]) -> int:
-    """
-    Generate embeddings for chunks and store them in Qdrant.
 
-    Args:
-        chunks: List of chunk dictonaries produced by the chunking pipeline.
-    
-    Returns:
-        Number of chunks successfully indexed .
-    """
+def index_chunks(
+    chunks: list[dict],
+    document_name: str
+) -> int:
+
     points = []
 
-    for chunk in chunks:
-        text = chunk["text"].strip()\
+    document_id = Path(document_name).stem
 
-        # Skip empty chunks :
-        if not text :
+    for chunk in chunks:
+
+        text = chunk["text"].strip()
+
+        if not text:
             continue
 
-        # Generate embedding
         vector = generate_embedding(text)
 
-        # Create a stable point ID
+        chunk_id = (
+            f"{document_id}_{chunk['chunk_id']}"
+        )
+
         point_id = str(
             uuid.uuid5(
                 uuid.NAMESPACE_URL,
-                chunk["chunk_id"]
-                )
+                chunk_id
             )
+        )
 
-        # Create Qdrant Point 
         point = PointStruct(
             id=point_id,
             vector=vector,
             payload={
-                "chunk_id": chunk["chunk_id"],
+                "document_id": document_id,
+                "document_name": document_name,
+                "chunk_id": chunk_id,
                 "page": chunk["page"],
                 "text": text,
-                "char_count": chunk["char_count"],
+                "char_count": len(text),
             },
         )
+
         points.append(point)
 
-        #Upload points to Qdrant
-        if points:
-            client.upsert(
-                collection_name = COLLECTION_NAME,
-                points = points,
-                wait = True,
-                )
+    if points:
+
+        client.upsert(
+            collection_name=COLLECTION_NAME,
+            points=points,
+            wait=True,
+        )
+
     return len(points)
-    
