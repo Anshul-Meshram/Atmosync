@@ -1,36 +1,45 @@
-from .retriever import retrieve_chunks
+
+from src.rag.retrieval.retriever import retrieve_chunks
+
 
 def main():
-    print("="*60)
-    print("RETRIEVAL TEST.")
-    print("="*60)
 
-    query = "What is the weather forecast for tomorrow in Toronto?"
+    print("=" * 70)
+    print("SOURCE-AWARE RETRIEVAL TEST")
+    print("=" * 70)
 
-    print(f"\nQuery: {query}\n")
-    print("Searching for the query.....")
+    query = "What are the major climate changes discussed in Canada?"
 
-    results = retrieve_chunks(query, top_k =3)
+    print(f"\nQuery: {query}")
+    print("\nSearching Qdrant...")
 
-    print(f"\nRetrieved {len(results)} chunks.\n")
+    results = retrieve_chunks(query, top_k=5)
 
-    for index , result in enumerate(results,start = 1):
-        print("\n"+"-"*60)
-        print(f"Result {index}")
-        print("-"*60)
+    print(f"\nRetrieved {len(results)} chunks.")
 
-        print(f"Score: {result['score']:.4f}")
-        print(f"ChunkID: {result['chunk_id']}")
-        print(f"Page :{result['page']}")
-        print(f"Characters: {result['char_count']}")
+    for index, result in enumerate(results, start=1):
 
-        print("\nText:")
-        print(result["text"][:500])
+        print("\n" + "-" * 70)
+        print(f"RESULT {index}")
+        print("-" * 70)
 
-        if len(result["text"])>500:
-            print("....... ")
-    print("\n"+"="*60)
-    print("RETRIEVAL TEST COMPLETED.")
-    print("="*60)
+        print(f"Similarity Score : {result['score']:.4f}")
+        print(f"Document         : {result['document_name']}")
+        print(f"Document ID      : {result['document_id']}")
+        print(f"Chunk ID         : {result['chunk_id']}")
+        print(f"Page Number      : {result['page']}")
+        print(f"Character Count  : {result['char_count']}")
+
+        print("\nRetrieved Context:")
+        print(result["text"][:700])
+
+        if len(result["text"]) > 700:
+            print("...")
+
+    print("\n" + "=" * 70)
+    print("SOURCE-AWARE RETRIEVAL TEST COMPLETED")
+    print("=" * 70)
+
+
 if __name__ == "__main__":
     main()
